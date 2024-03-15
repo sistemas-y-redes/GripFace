@@ -8,7 +8,7 @@
     <button class="arrow right-arrow" @click="nextImage">&#10095;</button>
     <canvas ref="canvasRef"></canvas>
     <div class="menu">
-      <a href="/bio">Bio</a>
+      <a :style="{ color: linkColor }" href="/bio">Bio</a>
     </div>
   </div>
 </template>
@@ -33,95 +33,180 @@ const images = [
   '/img/P1211787.webp',
   '/img/P1222067.webp',
   '/img/P1222156.webp',
-
 ];
+
+const scale = 0.5;
 
 const state = reactive({
   activeImage: 0
 });
 
+const linkColor = ref('black');
+
 const canvasRef = ref(null);
 
 onMounted(() => {
-  // Definición del canvas sobre el que pinta el puntero
   const canvas = canvasRef.value;
-  if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  
-  // Pintar los círculos de activación/desactivación del puntero
-  const circleLeftX = 50;
-  const circleLeftY = 50;
-  const circleLeftRadius = 20;
-  const circleRightX = canvas.width - 50;
-  const circleRightY = 50;
-  const circleRightRadius = 20;
-  const drawCircles = () => {
-    // Dibujar el círculo izquierdo
-    ctx.beginPath();
-    ctx.arc(circleLeftX, circleLeftY, circleLeftRadius, 0, Math.PI * 2);
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 2;
-    ctx.stroke();
+  if (!canvas) return;
 
-    // Dibujar el círculo derecho
+  // Dibujar la mancha de tinta
+  const drawInkBlob = (color) => {
+    ctx.save(); // Guardar el estado actual del contexto
     ctx.beginPath();
-    ctx.arc(circleRightX, circleRightY, circleRightRadius, 0, Math.PI * 2);
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 2;
-    ctx.stroke();
+
+    // Comenzar desde un punto inicial, creando una base redondeada
+    ctx.moveTo(75, 50);
+    ctx.quadraticCurveTo(50, 60, 75, 70); // Curva inferior
+    ctx.quadraticCurveTo(100, 60, 75, 50); // Curva superior, cerrando la forma básica
+
+    // Agregar detalles para una apariencia más orgánica
+    ctx.moveTo(75, 50);
+    ctx.bezierCurveTo(55, 45, 55, 75, 75, 70); // Detalle izquierdo
+    ctx.moveTo(75, 50);
+    ctx.bezierCurveTo(95, 45, 95, 75, 75, 70); // Detalle derecho
+
+    // Más detalles irregulares alrededor de la base central
+    ctx.bezierCurveTo(70, 80, 80, 90, 75, 100); // Extensión inferior
+    ctx.moveTo(75, 50);
+    ctx.bezierCurveTo(65, 30, 85, 30, 75, 50); // Extensión superior
+
+    ctx.closePath();
+    ctx.fillStyle = color; // Usar el color pasado como parámetro
+    ctx.fill();
+    ctx.restore(); // Restaurar el estado después de dibujar la mancha de tinta
   };
-  drawCircles();
 
-  // Efectos
-  ctx.lineWidth = 5;
-  ctx.strokeStyle = 'red';
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-  ctx.shadowBlur = 10;
-  const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-  gradient.addColorStop(0, 'red');
-  gradient.addColorStop(0.5, 'green');
-  gradient.addColorStop(1, 'blue');
-  ctx.strokeStyle = gradient;
-  ctx.filter = 'blur(2px)';
-
-
-  // Implementación de lazy-brush
   const lazy = new LazyBrush({ radius: 10, enabled: true });
   let isDrawing = false;
-  const startDrawing = (e) => {
-    isDrawing = true;
-    lazy.update({ x: e.clientX, y: e.clientY }, { both: true });
-    ctx.moveTo(lazy.brush.x, lazy.brush.y);
+  let canDraw = false; // Estado para controlar si el puntero puede dibujar
+
+  // Definir los efectos de dibujo
+  const setEffects = () => {
+    ctx.lineWidth = 5;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+    gradient.addColorStop(0, 'magenta');
+    gradient.addColorStop(0.5, 'blue');
+    gradient.addColorStop(1, 'red');
+    ctx.strokeStyle = gradient;
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
   };
-  const draw = (e) => {
-    if (!isDrawing) return;
+
+
+
+
+
+
+
+  // Función para ajustar el tamaño del canvas
+  const resizeCanvas = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    drawInkBlob(canDraw ? 'red' : 'black'); // Redibujar la mancha de tinta con el color actual
+  };
+
+  // Llamar a resizeCanvas inmediatamente para establecer el tamaño inicial
+  resizeCanvas();
+
+  // Agregar un detector de eventos para ajustar el canvas cuando se cambia el tamaño de la ventana
+  window.addEventListener('resize', resizeCanvas);
+
+  onUnmounted(() => {
+    window.removeEventListener('resize', resizeCanvas);
+  });
+
+  // canvas.width = window.innerWidth;
+  // canvas.height = window.innerHeight;
+
+
+
+
+
+
+  drawInkBlob(); // Dibujar la mancha inicialmente
+
+  let insideActivationZone = false;
+  const togglePainting = (e) => {
+    const { offsetX, offsetY } = e;
+    const radius = 50; // Radio que cubre la zona de la mancha
+    const distance = Math.sqrt((offsetX - 75) ** 2 + (offsetY - 50) ** 2);
+
+    if (distance <= radius) {
+      if (!insideActivationZone) { // Cambiar el estado solo si el puntero acaba de entrar en la zona
+        insideActivationZone = true; // Marcar que el puntero está dentro de la zona
+        if (canDraw) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          drawInkBlob('pink');
+          canDraw = false;
+          linkColor.value = 'orange';
+        } else {
+          canDraw = true;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          drawInkBlob('orange');
+          linkColor.value = 'pink'; // Actualizar la variable reactiva
+        }
+      }
+    } else {
+      insideActivationZone = false; // Marcar que el puntero ha salido de la zona
+    }
+  };
+
+  canvas.addEventListener('mousemove', (e) => {
+    if (!canDraw || !isDrawing) return;
     lazy.update({ x: e.clientX, y: e.clientY });
     if (lazy.brushHasMoved()) {
       ctx.lineTo(lazy.brush.x, lazy.brush.y);
       ctx.stroke();
     }
-  };
-  const stopDrawing = () => {
-    isDrawing = false;
-    ctx.beginPath();
-  };
-  canvas.addEventListener('mouseenter', startDrawing);
-  canvas.addEventListener('mousemove', draw);
-  canvas.addEventListener('mouseleave', stopDrawing);
+  });
 
+  canvas.addEventListener('mousedown', (e) => {
+    if (e.button !== 0 || !canDraw) return;
+    isDrawing = true;
+    setEffects(); // Aplicar efectos al comenzar a dibujar
+    ctx.beginPath();
+    ctx.moveTo(e.offsetX, e.offsetY); // Iniciar el trazo en la posición actual del puntero
+  });
+
+  canvas.addEventListener('mouseup', () => {
+    if (isDrawing) {
+      isDrawing = false;
+      ctx.beginPath(); // Preparar para un nuevo trazo
+    }
+  });
+
+  canvas.addEventListener('mousemove', togglePainting);
 });
 
 // Funciones para el slider de imágenes
+const clearCanvas = () => {
+  const ctx = canvasRef.value.getContext('2d');
+  ctx.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height);
+  drawInkBlob(canDraw ? 'red' : 'black'); // Opcional: Redibujar la mancha de tinta
+};
 const prevImage = () => {
-  state.activeImage = (state.activeImage - 1 + images.length) % images.length;
-  console.log('previa');
+  state.activeImage = (state.activeImage - 1 + images.length) % images.length; // Cambiar a la imagen anterior
+  clearCanvas(); // Borrar el canvas
+  setTimeout(() => {
+    drawInkBlob(canDraw ? 'red' : 'black'); // Redibujar la mancha de tinta después de medio segundo
+  }, 500);
 };
+
 const nextImage = () => {
-  state.activeImage = (state.activeImage + 1) % images.length;
-  console.log('siguiente');
+  state.activeImage = (state.activeImage + 1) % images.length; // Cambiar a la siguiente imagen
+  clearCanvas(); // Borrar el canvas
+  setTimeout(() => {
+    drawInkBlob(canDraw ? 'red' : 'black'); // Redibujar la mancha de tinta después de medio segundo
+  }, 500);
 };
+
+// setInterval(() => {
+//   state.activeImage = (state.activeImage + 1) % images.length;
+// }, 4000); // Cambiar la imagen cada 4 segundos
+
 </script>
 
 <style scoped>
@@ -173,6 +258,25 @@ canvas {
   top: 0;
   left: 0;
   z-index: 2;
-  /* Canvas por encima de las imágenes */
+}
+
+.menu {
+  position: absolute;
+  /* Posicionamiento absoluto para sacar el menú del flujo normal y colocarlo sobre otros elementos */
+  top: 20px;
+  /* Ajustar según sea necesario para posicionar el menú */
+  right: 20px;
+  /* Ajustar según sea necesario para posicionar el menú */
+  z-index: 20;
+  /* Asegurar que el menú tenga un z-index más alto que el canvas y las imágenes */
+}
+
+.menu a {
+  text-decoration: none;
+  /* Eliminar el subrayado */
+  font-size: 24px;
+  /* Aumentar el tamaño del texto, ajusta según tus necesidades */
+  transition: color 0.3s;
+  /* Opcional: Añadir una transición suave para el cambio de color */
 }
 </style>
