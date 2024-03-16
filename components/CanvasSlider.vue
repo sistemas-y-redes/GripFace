@@ -35,8 +35,6 @@ const images = [
   '/img/P1222156.webp',
 ];
 
-const scale = 0.5;
-
 const state = reactive({
   activeImage: 0
 });
@@ -46,6 +44,7 @@ const linkColor = ref('black');
 const canvasRef = ref(null);
 
 onMounted(() => {
+  // Definir canvas
   const canvas = canvasRef.value;
   const ctx = canvas.getContext('2d');
   if (!canvas) return;
@@ -76,7 +75,10 @@ onMounted(() => {
     ctx.fill();
     ctx.restore(); // Restaurar el estado después de dibujar la mancha de tinta
   };
+  drawInkBlob(); // Dibujar la mancha inicialmente
 
+
+  // Definir el pincel
   const lazy = new LazyBrush({ radius: 10, enabled: true });
   let isDrawing = false;
   let canDraw = false; // Estado para controlar si el puntero puede dibujar
@@ -95,38 +97,20 @@ onMounted(() => {
     ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
   };
 
-
-
-
-
-
-
   // Función para ajustar el tamaño del canvas
   const resizeCanvas = () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     drawInkBlob(canDraw ? 'red' : 'black'); // Redibujar la mancha de tinta con el color actual
   };
-
   // Llamar a resizeCanvas inmediatamente para establecer el tamaño inicial
   resizeCanvas();
-
   // Agregar un detector de eventos para ajustar el canvas cuando se cambia el tamaño de la ventana
   window.addEventListener('resize', resizeCanvas);
-
   onUnmounted(() => {
     window.removeEventListener('resize', resizeCanvas);
   });
 
-  // canvas.width = window.innerWidth;
-  // canvas.height = window.innerHeight;
-
-
-
-
-
-
-  drawInkBlob(); // Dibujar la mancha inicialmente
 
   let insideActivationZone = false;
   const togglePainting = (e) => {
@@ -154,6 +138,7 @@ onMounted(() => {
     }
   };
 
+  //Escuchadores de eventos para el puntero
   canvas.addEventListener('mousemove', (e) => {
     if (!canDraw || !isDrawing) return;
     lazy.update({ x: e.clientX, y: e.clientY });
@@ -203,10 +188,6 @@ const nextImage = () => {
   }, 500);
 };
 
-// setInterval(() => {
-//   state.activeImage = (state.activeImage + 1) % images.length;
-// }, 4000); // Cambiar la imagen cada 4 segundos
-
 </script>
 
 <style scoped>
@@ -215,6 +196,7 @@ const nextImage = () => {
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  margin: -8px;
 }
 
 .slider-images img {
@@ -264,19 +246,14 @@ canvas {
   position: absolute;
   /* Posicionamiento absoluto para sacar el menú del flujo normal y colocarlo sobre otros elementos */
   top: 20px;
-  /* Ajustar según sea necesario para posicionar el menú */
   right: 20px;
-  /* Ajustar según sea necesario para posicionar el menú */
   z-index: 20;
   /* Asegurar que el menú tenga un z-index más alto que el canvas y las imágenes */
 }
 
 .menu a {
   text-decoration: none;
-  /* Eliminar el subrayado */
   font-size: 24px;
-  /* Aumentar el tamaño del texto, ajusta según tus necesidades */
   transition: color 0.3s;
-  /* Opcional: Añadir una transición suave para el cambio de color */
 }
 </style>
