@@ -117,6 +117,46 @@ onMounted(() => {
     window.removeEventListener('resize', resizeCanvas);
   });
 
+  const getCoordinates = (e) => {
+    if (e.touches && e.touches.length > 0) {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.touches[0].clientX - rect.left;
+      const y = e.touches[0].clientY - rect.top;
+      return { x, y };
+    }
+    return { x: e.offsetX, y: e.offsetY };
+  };
+
+  const startDrawing = (e) => {
+    e.preventDefault();
+    if (!canDraw) return;
+    isDrawing = true;
+    setEffects();
+    const coords = getCoordinates(e);
+    lazy.update(coords);
+    ctx.moveTo(coords.x, coords.y);
+    ctx.beginPath();
+  };
+
+  const draw = (e) => {
+    e.preventDefault();
+    if (!isDrawing || !canDraw) return;
+    const coords = getCoordinates(e);
+    lazy.update(coords);
+    if (lazy.brushHasMoved()) {
+      ctx.lineTo(lazy.brush.x, lazy.brush.y);
+      ctx.stroke();
+    }
+  };
+
+  const stopDrawing = (e) => {
+    e.preventDefault();
+    if (isDrawing) {
+      isDrawing = false;
+      ctx.beginPath();
+    }
+  };
+
 
   let insideActivationZone = false;
   const togglePainting = (e) => {
@@ -145,31 +185,39 @@ onMounted(() => {
   };
 
   //Escuchadores de eventos para el puntero
-  canvas.addEventListener('mousemove', (e) => {
-    if (!canDraw || !isDrawing) return;
-    lazy.update({ x: e.clientX, y: e.clientY });
-    if (lazy.brushHasMoved()) {
-      ctx.lineTo(lazy.brush.x, lazy.brush.y);
-      ctx.stroke();
-    }
-  });
-
-  canvas.addEventListener('mousedown', (e) => {
-    if (e.button !== 0 || !canDraw) return;
-    isDrawing = true;
-    setEffects(); // Aplicar efectos al comenzar a dibujar
-    ctx.beginPath();
-    ctx.moveTo(e.offsetX, e.offsetY); // Iniciar el trazo en la posición actual del puntero
-  });
-
-  canvas.addEventListener('mouseup', () => {
-    if (isDrawing) {
-      isDrawing = false;
-      ctx.beginPath(); // Preparar para un nuevo trazo
-    }
-  });
-
+  canvas.addEventListener('mousedown', startDrawing);
+  canvas.addEventListener('touchstart', startDrawing, { passive: false });
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('touchmove', draw, { passive: false });
+  canvas.addEventListener('mouseup', stopDrawing);
+  canvas.addEventListener('touchend', stopDrawing);
+  canvas.addEventListener('mouseleave', stopDrawing);
   canvas.addEventListener('mousemove', togglePainting);
+  // // canvas.addEventListener('mousemove', (e) => {
+  // //   if (!canDraw || !isDrawing) return;
+  // //   lazy.update({ x: e.clientX, y: e.clientY });
+  // //   if (lazy.brushHasMoved()) {
+  // //     ctx.lineTo(lazy.brush.x, lazy.brush.y);
+  // //     ctx.stroke();
+  // //   }
+  // // });
+
+  // // canvas.addEventListener('mousedown', (e) => {
+  // //   if (e.button !== 0 || !canDraw) return;
+  // //   isDrawing = true;
+  // //   setEffects(); // Aplicar efectos al comenzar a dibujar
+  // //   ctx.beginPath();
+  // //   ctx.moveTo(e.offsetX, e.offsetY); // Iniciar el trazo en la posición actual del puntero
+  // // });
+
+  // // canvas.addEventListener('mouseup', () => {
+  // //   if (isDrawing) {
+  // //     isDrawing = false;
+  // //     ctx.beginPath(); // Preparar para un nuevo trazo
+  // //   }
+  // });
+
+  // canvas.addEventListener('mousemove', togglePainting);
 });
 
 // Funciones para el slider de imágenes
