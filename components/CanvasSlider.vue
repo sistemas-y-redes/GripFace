@@ -10,12 +10,17 @@
     <div class="menu">
       <a :style="{ color: linkColor }" href="/bio">Bio</a>
     </div>
+    <div class="social-links">
+      <a :style="{ color: linkColor }" href="/dossier">DOSSIER</a>
+      <a :style="{ color: linkColor }" href="mailto:david@example.com">CONTACTO</a>
+      <a :style="{ color: linkColor }" href="https://instagram.com">INSTAGRAM</a>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, reactive } from 'vue';
-import { LazyBrush } from 'lazy-brush';
+import { LazyBrush } from 'lazy-brush'
 
 const images = [
   '/img/_28A7654-Edit.webp',
@@ -75,8 +80,6 @@ onMounted(() => {
     ctx.fill();
     ctx.restore(); // Restaurar el estado después de dibujar la mancha de tinta
   };
-  drawInkBlob(); // Dibujar la mancha inicialmente
-
 
   // Definir el pincel
   const lazy = new LazyBrush({ radius: 10, enabled: true });
@@ -88,20 +91,23 @@ onMounted(() => {
     ctx.lineWidth = 5;
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
-    const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-    gradient.addColorStop(0, 'magenta');
-    gradient.addColorStop(0.5, 'blue');
-    gradient.addColorStop(1, 'red');
-    ctx.strokeStyle = gradient;
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+
   };
+
+  // Efectos adicionales, se pueden añadir a la constante setEffects
+  // const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+  //   gradient.addColorStop(0, 'magenta');
+  //   gradient.addColorStop(0.5, 'blue');
+  //   gradient.addColorStop(1, 'red');
+  //   ctx.strokeStyle = gradient;
+  //   ctx.shadowBlur = 10;
+  //   ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
 
   // Función para ajustar el tamaño del canvas
   const resizeCanvas = () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    drawInkBlob(canDraw ? 'red' : 'black'); // Redibujar la mancha de tinta con el color actual
+    drawInkBlob(canDraw ? 'black' : 'pink'); // Redibujar la mancha de tinta con el color actual
   };
   // Llamar a resizeCanvas inmediatamente para establecer el tamaño inicial
   resizeCanvas();
@@ -123,14 +129,14 @@ onMounted(() => {
         insideActivationZone = true; // Marcar que el puntero está dentro de la zona
         if (canDraw) {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-          drawInkBlob('pink');
+          drawInkBlob('orange');
           canDraw = false;
-          linkColor.value = 'orange';
+          linkColor.value = 'black';
         } else {
           canDraw = true;
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-          drawInkBlob('orange');
-          linkColor.value = 'pink'; // Actualizar la variable reactiva
+          drawInkBlob('black');
+          linkColor.value = 'orange'; // Actualizar la variable reactiva
         }
       }
     } else {
@@ -167,25 +173,12 @@ onMounted(() => {
 });
 
 // Funciones para el slider de imágenes
-const clearCanvas = () => {
-  const ctx = canvasRef.value.getContext('2d');
-  ctx.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height);
-  drawInkBlob(canDraw ? 'red' : 'black'); // Opcional: Redibujar la mancha de tinta
-};
 const prevImage = () => {
   state.activeImage = (state.activeImage - 1 + images.length) % images.length; // Cambiar a la imagen anterior
-  clearCanvas(); // Borrar el canvas
-  setTimeout(() => {
-    drawInkBlob(canDraw ? 'red' : 'black'); // Redibujar la mancha de tinta después de medio segundo
-  }, 500);
 };
 
 const nextImage = () => {
   state.activeImage = (state.activeImage + 1) % images.length; // Cambiar a la siguiente imagen
-  clearCanvas(); // Borrar el canvas
-  setTimeout(() => {
-    drawInkBlob(canDraw ? 'red' : 'black'); // Redibujar la mancha de tinta después de medio segundo
-  }, 500);
 };
 
 </script>
@@ -255,5 +248,30 @@ canvas {
   text-decoration: none;
   font-size: 24px;
   transition: color 0.3s;
+}
+
+.social-links {
+  position: absolute;
+  bottom: 4em;
+  /* Ajusta esta propiedad para determinar la distancia desde la parte inferior */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  z-index: 20;
+  color: var(--linkColor);
+  /* Asume que tienes una variable CSS para el color de los enlaces */
+  text-shadow:
+    -1px -1px 0 #ffe7f3,
+    1px -1px 0 #ffe7f3,
+    -1px 1px 0 #ffe7f3,
+    1px 1px 0 #ffe7f3;
+}
+
+.social-links a {
+  text-decoration: none;
+  font-size: x-large;
+  margin: 0 1em;
 }
 </style>

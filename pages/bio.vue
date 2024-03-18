@@ -1,7 +1,7 @@
 <template>
   <div class="bio-container">
     <nav class="navbar">
-      <div class="artist-name">Gripface</div>
+      <div class="artist-name"><a class="main-link" href="/">Gripface</a></div>
       <div class="social-links">
         <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
           <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
@@ -19,35 +19,48 @@
         </div>
         <div class="spacer"></div>
         <div class="bio-content">
-          <p>Aquí va la biografía del artista...</p>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras velit erat,
-            consectetur vitae nisi vitae, aliquam lacinia odio. Pellentesque dapibus eget erat eget maximus. Integer a
-            libero ac mauris maximus dictum. Aenean vehicula sem non consequat sagittis. Curabitur tristique viverra
-            erat
-            non finibus. Sed non nulla vel urna sollicitudin egestas vel vel nibh. Donec scelerisque augue eleifend
-            ipsum
-            rutrum, ac mollis quam aliquam. Morbi quis tempor ligula. Proin felis velit, sagittis non sem eleifend,
-            interdum consequat urna. Sed at accumsan nunc. Vestibulum convallis pellentesque nisi nec fermentum. Fusce
-            facilisis ligula eros, non vulputate massa posuere id. Nulla luctus, urna eget pellentesque mollis, risus
-            tortor hendrerit lorem, vel posuere augue purus non purus. Curabitur nec euismod dolor, ut ornare sem.</p>
+          <p>Grip face es el alter ego del artista visual David Oliver.</p>
 
-          <p> Morbi volutpat commodo dictum. Donec posuere feugiat urna at convallis. Orci varius natoque penatibus et
-            magnis dis parturient montes, nascetur ridiculus mus. Pellentesque bibendum accumsan turpis eu scelerisque.
-            Pellentesque neque nisl, vulputate quis sem id, placerat laoreet lorem. Vestibulum non augue tellus. Sed
-            auctor dui a tellus dictum sollicitudin. Aliquam ac ultrices purus. Vivamus sollicitudin erat vel justo
-            rhoncus semper. Etiam accumsan mauris eget malesuada consequat. Donec feugiat in purus eu suscipit. Integer
-            nisi elit, facilisis vitae tempor vitae, molestie quis nunc. Aenean at sapien quam. Duis efficitur elit
-            lacus.
-            Praesent ultricies rutrum nisi, tempor dignissim orci bibendum non.</p>
-
-          <p>Fusce tristique, purus eget convallis tristique, lorem purus molestie leo, at venenatis magna odio sit amet
-            sapien. Integer pretium purus sed fermentum porttitor. Vestibulum aliquet convallis volutpat. Integer
-            suscipit
-            urna ut turpis ornare, in placerat ex pulvinar. Nam rhoncus libero a metus bibendum hendrerit. Fusce
-            sagittis
-            blandit malesuada. Cras id efficitur quam. Duis ut condimentum purus. Aenean rutrum a neque laoreet tempor.
-            Ut
-            malesuada convallis elit, at bibendum metus suscipit id. </p>
+          <p>Cara de lija - o como le llamaban sus compañeros de patín en la Palma de principios de los 2000- emprende
+            su educación estética y visual como una significativa parte de la generación de artistas <i>millenial</i>: a
+            base
+            de patinar en la calle, leer cómics, ver <i>anime</i>, escuchar música anglosajona y estudiar minuciosamente
+            portadas de libros, discos y fanzines. Bajo el auspicio de las corrientes <i>underground</i> americanas de
+            los 90, el grafismo utilizado por el punk en los 80 y el arte asiático naif, Grip Face se zambulle en el
+            rito iniciático de la plástica del graffitti así como en su posterior deconstrucción; la propia insurrección
+            del medio le permite entender - desde una edad bien temprana- el arte como método para la supervivencia. El
+            dibujo y la pintura se convierten en armas de destrucción masiva contra la ansiedad del mundo contemporáneo.
+            Así da comienzo una multifacética carrera artística que se fundamentará principalmente en reexaminar de
+            forma constante la mirada hacia su pléyade.</p>
+          <p>Con la vocación del artista-ingeniero, Grip Face tiende puentes entre contextos, elementos, técnicas,
+            espacios y personas. Extrae parte de su lenguaje primigenio, cimentado principalmente en el espacio público
+            y del cual son representativos los proyectos <i>Doors without destination</i> y <i>Black faces</i>
+            (publicado en 2016 en formato de libro homónimo) y lo traslada al espacio privado de las galerías de arte
+            contemporáneo mediante instalaciones <i>site-specific</i>, esculturas, pinturas o tapices. Proyectos como
+            <i>Not rented to humans</i> o <i>Black rubbish is the future</i> reflectan el desasosiego y malestar
+            producidos por ser a la par actores y testigos de la autodestrucción de nuestro hogar. Sus libretas de
+            dibujo, que le acompañan desde adolescente - y que constituyen el lado más puro a la vez que oscuro de su
+            trabajo- son el preludio de la mayoría de sus piezas acabadas.
+          </p>
+          <p>Moverse con holgura entre los recovecos parece una cualidad idiosincrática de este artista visual; quizás
+            sea porque siempre se vio como un outsider, sin terminar de estar cómodo con ninguna etiqueta y sintiéndose
+            a partes iguales ansioso y expectante ante la perspectiva de una sociedad permanentemente enmascarada, que
+            parece irremediablemente abocada a la masificación tecnológica, la comunicación a través de dispositivos,
+            las relaciones superficiales y la ocultación de lo verdadero.</p>
+          <p>De la misma forma en la que una pantalla nos devuelve escalonadamente un mensaje de error en ventanas
+            quintuplicadas y superpuestas, la pintura de Grip Face nos brinda un espacio lúdico y lleno de estratos
+            donde diseccionar las inquietudes de una generación impaciente, ávida de información -sea o no determinante
+            su veracidad- y para la cual el paisaje de Internet es el aparentemente mejor escenario para el correcto
+            aprendizaje del <i>savoir faire</i>. Sus telas no entienden de índices impacientes aporreando el lado
+            izquierdo del
+            ratón; cada capa de información se trabaja de forma precisa y minuciosa, y la técnica no es nunca baladí.
+            Cada capa es intervenida, tachada o tapada, configurando así un universo meta, plagado de referencias
+            estéticas inherentes a la generación Y (y también a la Z, y seguramente a todas las letras que las sigan) y
+            ejecutado con una precisión técnica propia del que aprendió a pintar bajo el yugo de la inmediatez. Éstas
+            pertenecen a una serie infinita, una exploración evolutiva que forma parte del proceso de aprendizaje del
+            mismo autor que las elabora. Lo que tiene sentido para Grip Face es la continuidad, no ser capaz de ver el
+            final, la incertidumbre de hacia donde le llevará la pintura. Vivir la expresión artística como vivimos en
+            el mundo, transitoriamente y en un presente incierto.</p>
         </div>
       </div>
     </div>
@@ -83,6 +96,11 @@ body {
   height: 10vh;
 }
 
+.main-link {
+  text-decoration: none;
+  color:black;
+}
+
 .artist-name {
   font-size: 32px;
   font-weight: bold;
@@ -96,7 +114,8 @@ body {
 }
 
 .social-icon {
-  margin-right: 3em;
+  margin-right: 1em;
+  max-width: 2em;
 }
 
 .content {
