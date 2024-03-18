@@ -120,11 +120,10 @@ onMounted(() => {
   const getCoordinates = (e) => {
     if (e.touches && e.touches.length > 0) {
       const rect = canvas.getBoundingClientRect();
-      const x = e.touches[0].clientX - rect.left;
-      const y = e.touches[0].clientY - rect.top;
-      return { x, y };
+      return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
+    } else {
+      return { x: e.offsetX, y: e.offsetY };
     }
-    return { x: e.offsetX, y: e.offsetY };
   };
 
   const startDrawing = (e) => {
@@ -160,64 +159,39 @@ onMounted(() => {
 
   let insideActivationZone = false;
   const togglePainting = (e) => {
-    const { offsetX, offsetY } = e;
-    const radius = 50; // Radio que cubre la zona de la mancha
+    e.preventDefault(); // Prevenir el comportamiento predeterminado en dispositivos táctiles
+    const isTouchEvent = e.touches && e.touches.length > 0;
+    const offsetX = isTouchEvent ? e.touches[0].clientX - canvas.getBoundingClientRect().left : e.offsetX;
+    const offsetY = isTouchEvent ? e.touches[0].clientY - canvas.getBoundingClientRect().top : e.offsetY;
+
+    const radius = 50;
     const distance = Math.sqrt((offsetX - 75) ** 2 + (offsetY - 50) ** 2);
 
     if (distance <= radius) {
-      if (!insideActivationZone) { // Cambiar el estado solo si el puntero acaba de entrar en la zona
-        insideActivationZone = true; // Marcar que el puntero está dentro de la zona
-        if (canDraw) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          drawInkBlob('orange');
-          canDraw = false;
-          linkColor.value = 'black';
-        } else {
-          canDraw = true;
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          drawInkBlob('black');
-          linkColor.value = 'orange'; // Actualizar la variable reactiva
-        }
+      if (!insideActivationZone) {
+        insideActivationZone = true;
+        canDraw = !canDraw;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawInkBlob(canDraw ? 'black' : 'pink');
+        linkColor.value = canDraw ? 'orange' : 'black';
       }
     } else {
-      insideActivationZone = false; // Marcar que el puntero ha salido de la zona
+      insideActivationZone = false;
     }
   };
 
-  //Escuchadores de eventos para el puntero
+  // Event listeners para escritorio
   canvas.addEventListener('mousedown', startDrawing);
-  canvas.addEventListener('touchstart', startDrawing, { passive: false });
   canvas.addEventListener('mousemove', draw);
-  canvas.addEventListener('touchmove', draw, { passive: false });
   canvas.addEventListener('mouseup', stopDrawing);
-  canvas.addEventListener('touchend', stopDrawing);
   canvas.addEventListener('mouseleave', stopDrawing);
   canvas.addEventListener('mousemove', togglePainting);
-  // // canvas.addEventListener('mousemove', (e) => {
-  // //   if (!canDraw || !isDrawing) return;
-  // //   lazy.update({ x: e.clientX, y: e.clientY });
-  // //   if (lazy.brushHasMoved()) {
-  // //     ctx.lineTo(lazy.brush.x, lazy.brush.y);
-  // //     ctx.stroke();
-  // //   }
-  // // });
 
-  // // canvas.addEventListener('mousedown', (e) => {
-  // //   if (e.button !== 0 || !canDraw) return;
-  // //   isDrawing = true;
-  // //   setEffects(); // Aplicar efectos al comenzar a dibujar
-  // //   ctx.beginPath();
-  // //   ctx.moveTo(e.offsetX, e.offsetY); // Iniciar el trazo en la posición actual del puntero
-  // // });
-
-  // // canvas.addEventListener('mouseup', () => {
-  // //   if (isDrawing) {
-  // //     isDrawing = false;
-  // //     ctx.beginPath(); // Preparar para un nuevo trazo
-  // //   }
-  // });
-
-  // canvas.addEventListener('mousemove', togglePainting);
+  // Event listeners para dispositivos táctiles
+  canvas.addEventListener('touchstart', startDrawing, { passive: false });
+  canvas.addEventListener('touchmove', draw, { passive: false });
+  canvas.addEventListener('touchend', stopDrawing);
+  canvas.addEventListener('touchcancel', stopDrawing);
 });
 
 // Funciones para el slider de imágenes
