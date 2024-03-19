@@ -296,4 +296,11 @@ canvas {
   font-size: x-large;
   margin: 0 1em;
 }
+
+@media screen and (max-width: 768px) {
+  .social-links a {
+    font-size: small;
+    bottom: 1em;
+  }
+}
 </style>
