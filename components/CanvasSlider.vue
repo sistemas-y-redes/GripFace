@@ -11,7 +11,7 @@
       <a :style="{ color: linkColor }" href="/bio">Bio</a>
     </div>
     <div class="social-links">
-      <a :style="{ color: linkColor }" href="/dossier">DOSSIER</a>
+      <a :style="{ color: linkColor }" href="/assets/cv.pdf" target="_blank">DOSSIER</a>
       <a :style="{ color: linkColor }" href="mailto:david@example.com">CONTACTO</a>
       <a :style="{ color: linkColor }" href="https://instagram.com">INSTAGRAM</a>
     </div>
@@ -45,46 +45,47 @@ const state = reactive({
 });
 
 const linkColor = ref('black');
-
 const canvasRef = ref(null);
+let ctx = null;
+
+  // Dibujar la mancha de tinta
+const drawInkBlob = (color) => {
+  if (!ctx) return;
+  ctx.save(); // Guardar el estado actual del contexto
+  ctx.beginPath();
+
+  // Comenzar desde un punto inicial, creando una base redondeada
+  ctx.moveTo(75, 50);
+  ctx.quadraticCurveTo(50, 60, 75, 70); // Curva inferior
+  ctx.quadraticCurveTo(100, 60, 75, 50); // Curva superior, cerrando la forma básica
+
+  // Agregar detalles para una apariencia más orgánica
+  ctx.moveTo(75, 50);
+  ctx.bezierCurveTo(55, 45, 55, 75, 75, 70); // Detalle izquierdo
+  ctx.moveTo(75, 50);
+  ctx.bezierCurveTo(95, 45, 95, 75, 75, 70); // Detalle derecho
+
+  // Más detalles irregulares alrededor de la base central
+  ctx.bezierCurveTo(70, 80, 80, 90, 75, 100); // Extensión inferior
+  ctx.moveTo(75, 50);
+  ctx.bezierCurveTo(65, 30, 85, 30, 75, 50); // Extensión superior
+
+  ctx.closePath();
+  ctx.fillStyle = color; // Usar el color pasado como parámetro
+  ctx.fill();
+  ctx.restore(); // Restaurar el estado después de dibujar la mancha de tinta
+};
+let canDraw = false; // Estado para controlar si el puntero puede dibujar
 
 onMounted(() => {
   // Definir canvas
   const canvas = canvasRef.value;
-  const ctx = canvas.getContext('2d');
+  ctx = canvas.getContext('2d');
   if (!canvas) return;
-
-  // Dibujar la mancha de tinta
-  const drawInkBlob = (color) => {
-    ctx.save(); // Guardar el estado actual del contexto
-    ctx.beginPath();
-
-    // Comenzar desde un punto inicial, creando una base redondeada
-    ctx.moveTo(75, 50);
-    ctx.quadraticCurveTo(50, 60, 75, 70); // Curva inferior
-    ctx.quadraticCurveTo(100, 60, 75, 50); // Curva superior, cerrando la forma básica
-
-    // Agregar detalles para una apariencia más orgánica
-    ctx.moveTo(75, 50);
-    ctx.bezierCurveTo(55, 45, 55, 75, 75, 70); // Detalle izquierdo
-    ctx.moveTo(75, 50);
-    ctx.bezierCurveTo(95, 45, 95, 75, 75, 70); // Detalle derecho
-
-    // Más detalles irregulares alrededor de la base central
-    ctx.bezierCurveTo(70, 80, 80, 90, 75, 100); // Extensión inferior
-    ctx.moveTo(75, 50);
-    ctx.bezierCurveTo(65, 30, 85, 30, 75, 50); // Extensión superior
-
-    ctx.closePath();
-    ctx.fillStyle = color; // Usar el color pasado como parámetro
-    ctx.fill();
-    ctx.restore(); // Restaurar el estado después de dibujar la mancha de tinta
-  };
 
   // Definir el pincel
   const lazy = new LazyBrush({ radius: 10, enabled: true });
   let isDrawing = false;
-  let canDraw = false; // Estado para controlar si el puntero puede dibujar
 
   // Definir los efectos de dibujo
   const setEffects = () => {
@@ -197,10 +198,18 @@ onMounted(() => {
 // Funciones para el slider de imágenes
 const prevImage = () => {
   state.activeImage = (state.activeImage - 1 + images.length) % images.length; // Cambiar a la imagen anterior
+  const canvas = canvasRef.value;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawInkBlob(canDraw ? 'black' : 'pink');
 };
 
 const nextImage = () => {
   state.activeImage = (state.activeImage + 1) % images.length; // Cambiar a la siguiente imagen
+  const canvas = canvasRef.value;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawInkBlob(canDraw ? 'black' : 'pink');
 };
 
 </script>

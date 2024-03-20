@@ -1,16 +1,6 @@
 <template>
   <div class="bio-container">
-    <nav class="navbar">
-      <div class="artist-name"><a class="main-link" href="/">Gripface</a></div>
-      <div class="social-links">
-        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-          <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-            <path
-              d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z" />
-          </svg>
-        </a>
-      </div>
-    </nav>
+    <Navbar />
 
     <div class="content">
       <div class="bio-text-container">
@@ -69,54 +59,73 @@
       <img src="/img/gripfaceesculturaweb.webp" alt="Placeholder Image">
     </div>
 
+    <section>
+      <div v-for="(exhib, index) in exhibs" :key="index" class="exhib-container">
+        <div class="exhib-title">{{ exhib.title }}</div>
+        <div class="exhib-data">
+          <div class="exhib-authors">
+            <p>_________________________________________________________________________</p>
+            <p>{{ exhib.authors }}</p>
+          </div>
+          <div class="exhib-dates">
+            <p>___________________________________________</p>
+            <p> {{ exhib.dates }}</p>
+          </div>
+          <div class="exhib-address">
+            <p>_______________________________________________________________</p>
+            <p> {{ exhib.address }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <footer class="footer">
       <p>&copy; 2024 Gripface. Todos los derechos reservados.</p>
     </footer>
   </div>
 </template>
 
+<script>
+import Navbar from '@/components/Navbar.vue';
+export default {
+  components: {
+    Navbar,
+  },
+  data() {
+    return {
+
+      exhibs: [
+        {
+          title: 'MEMORANDUM OF THE EVERYDAY',
+          authors: 'MijuLee, Gripface',
+          dates: '23/09/2023-15-11-2023',
+          address: 'Carrer de la Misericòrdia 2, Palma de Mallorca',
+        },
+        {
+          title: 'FIND AN OFFLINE SHELTER',
+          authors: 'Gripface, Mijulee',
+          dates: '15/05/2023-20/05/23',
+          address: 'Rue Froissart, 7 Le Marais, Paris',
+        },
+        {
+          title: 'COLLECTIVE EXHIBITION',
+          authors: 'Ela Fidalgo, Gripface, Marria Pratts, Miju Lee, Michael Staniak',
+          dates: '21/04/2023-01-06-2023',
+          address: 'Carrer del Molí del Compte 47A, Palma de Mallorca',
+        }
+      ]
+    }
+  }
+}
+</script>
 
 <style scoped>
 html,
 body {
-  margin: 0 !important;
-  padding: 0 !important;
+  margin: 0;
 }
 
-
-.bio-container {
-  margin: -8px;
-}
-
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0px;
-  height: 10vh;
-}
-
-.main-link {
-  text-decoration: none;
-  color:black;
-}
-
-.artist-name {
-  font-size: 32px;
-  font-weight: bold;
-  margin-left: 2em;
-}
-
-.social-links a {
-  text-decoration: none;
-  color: #333;
-  margin-right: 3em;
-}
-
-.social-icon {
-  margin-right: 1em;
-  max-width: 2em;
-}
+.bio-container {}
 
 .content {
   display: flex;
@@ -160,6 +169,23 @@ body {
   margin-bottom: 10px;
 }
 
+.exhib-container {
+  background-color: black;
+  color:aliceblue;
+  padding: 4rem;
+}
+
+.exhib-title {
+  margin-bottom: 2em;
+}
+
+.exhib-data {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .footer {
   display: flex;
   justify-content: center;
@@ -168,5 +194,11 @@ body {
   background-color: #f0f0f0;
   color: black;
   height: 10em;
+}
+
+@media (max-width:600px) {
+  .exhib-data {
+    flex-direction: column;
+  }
 }
 </style>

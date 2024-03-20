@@ -3,5 +3,11 @@
 </template>
 
 <script setup>
-import CanvasSlider from '../components/CanvasSlider.vue';
 </script>
+
+<style>
+html,
+body {
+  margin: 0;
+}
+</style>
