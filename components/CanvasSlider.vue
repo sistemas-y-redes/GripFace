@@ -48,7 +48,7 @@ const linkColor = ref('black');
 const canvasRef = ref(null);
 let ctx = null;
 
-  // Dibujar la mancha de tinta
+// Dibujar la mancha de tinta
 const drawInkBlob = (color) => {
   if (!ctx) return;
   ctx.save(); // Guardar el estado actual del contexto
@@ -96,13 +96,13 @@ onMounted(() => {
   };
 
   // Efectos adicionales, se pueden añadir a la constante setEffects
-  // const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-  //   gradient.addColorStop(0, 'magenta');
-  //   gradient.addColorStop(0.5, 'blue');
-  //   gradient.addColorStop(1, 'red');
-  //   ctx.strokeStyle = gradient;
-  //   ctx.shadowBlur = 10;
-  //   ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+  const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+  gradient.addColorStop(0, 'magenta');
+  gradient.addColorStop(0.5, 'blue');
+  gradient.addColorStop(1, 'red');
+  ctx.strokeStyle = gradient;
+  ctx.shadowBlur = 10;
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
 
   // Función para ajustar el tamaño del canvas
   const resizeCanvas = () => {
@@ -144,8 +144,9 @@ onMounted(() => {
     const coords = getCoordinates(e);
     lazy.update(coords);
     if (lazy.brushHasMoved()) {
-      ctx.lineTo(lazy.brush.x, lazy.brush.y);
-      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(lazy.brush.x, lazy.brush.y, ctx.lineWidth / 2, 0, Math.PI * 2);
+      ctx.fill();
     }
   };
 
@@ -189,7 +190,11 @@ onMounted(() => {
   canvas.addEventListener('mousemove', togglePainting);
 
   // Event listeners para dispositivos táctiles
-  canvas.addEventListener('touchstart', startDrawing, { passive: false });
+  // canvas.addEventListener('touchstart', startDrawing, { passive: false });
+  canvas.addEventListener('touchstart', (e) => {
+    togglePainting(e);
+    startDrawing(e); // Puedes llamar a startDrawing aquí si quieres empezar a dibujar inmediatamente después de activar el pincel
+  }, { passive: false });
   canvas.addEventListener('touchmove', draw, { passive: false });
   canvas.addEventListener('touchend', stopDrawing);
   canvas.addEventListener('touchcancel', stopDrawing);
@@ -220,7 +225,6 @@ const nextImage = () => {
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  margin: -8px;
 }
 
 .slider-images img {
