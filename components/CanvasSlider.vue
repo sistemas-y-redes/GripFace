@@ -11,7 +11,7 @@
       <a :style="{ color: linkColor }" href="/bio">Bio</a>
     </div>
     <div class="social-links">
-      <a :style="{ color: linkColor }" href="/dossier">DOSSIER</a>
+      <a :style="{ color: linkColor }" href="/assets/cv.pdf" target="_blank">DOSSIER</a>
       <a :style="{ color: linkColor }" href="mailto:david@example.com">CONTACTO</a>
       <a :style="{ color: linkColor }" href="https://instagram.com">INSTAGRAM</a>
     </div>
@@ -45,46 +45,47 @@ const state = reactive({
 });
 
 const linkColor = ref('black');
-
 const canvasRef = ref(null);
+let ctx = null;
+
+// Dibujar la mancha de tinta
+const drawInkBlob = (color) => {
+  if (!ctx) return;
+  ctx.save(); // Guardar el estado actual del contexto
+  ctx.beginPath();
+
+  // Comenzar desde un punto inicial, creando una base redondeada
+  ctx.moveTo(75, 50);
+  ctx.quadraticCurveTo(50, 60, 75, 70); // Curva inferior
+  ctx.quadraticCurveTo(100, 60, 75, 50); // Curva superior, cerrando la forma básica
+
+  // Agregar detalles para una apariencia más orgánica
+  ctx.moveTo(75, 50);
+  ctx.bezierCurveTo(55, 45, 55, 75, 75, 70); // Detalle izquierdo
+  ctx.moveTo(75, 50);
+  ctx.bezierCurveTo(95, 45, 95, 75, 75, 70); // Detalle derecho
+
+  // Más detalles irregulares alrededor de la base central
+  ctx.bezierCurveTo(70, 80, 80, 90, 75, 100); // Extensión inferior
+  ctx.moveTo(75, 50);
+  ctx.bezierCurveTo(65, 30, 85, 30, 75, 50); // Extensión superior
+
+  ctx.closePath();
+  ctx.fillStyle = color; // Usar el color pasado como parámetro
+  ctx.fill();
+  ctx.restore(); // Restaurar el estado después de dibujar la mancha de tinta
+};
+let canDraw = false; // Estado para controlar si el puntero puede dibujar
 
 onMounted(() => {
   // Definir canvas
   const canvas = canvasRef.value;
-  const ctx = canvas.getContext('2d');
+  ctx = canvas.getContext('2d');
   if (!canvas) return;
-
-  // Dibujar la mancha de tinta
-  const drawInkBlob = (color) => {
-    ctx.save(); // Guardar el estado actual del contexto
-    ctx.beginPath();
-
-    // Comenzar desde un punto inicial, creando una base redondeada
-    ctx.moveTo(75, 50);
-    ctx.quadraticCurveTo(50, 60, 75, 70); // Curva inferior
-    ctx.quadraticCurveTo(100, 60, 75, 50); // Curva superior, cerrando la forma básica
-
-    // Agregar detalles para una apariencia más orgánica
-    ctx.moveTo(75, 50);
-    ctx.bezierCurveTo(55, 45, 55, 75, 75, 70); // Detalle izquierdo
-    ctx.moveTo(75, 50);
-    ctx.bezierCurveTo(95, 45, 95, 75, 75, 70); // Detalle derecho
-
-    // Más detalles irregulares alrededor de la base central
-    ctx.bezierCurveTo(70, 80, 80, 90, 75, 100); // Extensión inferior
-    ctx.moveTo(75, 50);
-    ctx.bezierCurveTo(65, 30, 85, 30, 75, 50); // Extensión superior
-
-    ctx.closePath();
-    ctx.fillStyle = color; // Usar el color pasado como parámetro
-    ctx.fill();
-    ctx.restore(); // Restaurar el estado después de dibujar la mancha de tinta
-  };
 
   // Definir el pincel
   const lazy = new LazyBrush({ radius: 10, enabled: true });
   let isDrawing = false;
-  let canDraw = false; // Estado para controlar si el puntero puede dibujar
 
   // Definir los efectos de dibujo
   const setEffects = () => {
@@ -95,13 +96,13 @@ onMounted(() => {
   };
 
   // Efectos adicionales, se pueden añadir a la constante setEffects
-  // const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-  //   gradient.addColorStop(0, 'magenta');
-  //   gradient.addColorStop(0.5, 'blue');
-  //   gradient.addColorStop(1, 'red');
-  //   ctx.strokeStyle = gradient;
-  //   ctx.shadowBlur = 10;
-  //   ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+  const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+  gradient.addColorStop(0, 'magenta');
+  gradient.addColorStop(0.5, 'blue');
+  gradient.addColorStop(1, 'red');
+  ctx.strokeStyle = gradient;
+  ctx.shadowBlur = 10;
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
 
   // Función para ajustar el tamaño del canvas
   const resizeCanvas = () => {
@@ -120,11 +121,10 @@ onMounted(() => {
   const getCoordinates = (e) => {
     if (e.touches && e.touches.length > 0) {
       const rect = canvas.getBoundingClientRect();
-      const x = e.touches[0].clientX - rect.left;
-      const y = e.touches[0].clientY - rect.top;
-      return { x, y };
+      return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
+    } else {
+      return { x: e.offsetX, y: e.offsetY };
     }
-    return { x: e.offsetX, y: e.offsetY };
   };
 
   const startDrawing = (e) => {
@@ -144,8 +144,9 @@ onMounted(() => {
     const coords = getCoordinates(e);
     lazy.update(coords);
     if (lazy.brushHasMoved()) {
-      ctx.lineTo(lazy.brush.x, lazy.brush.y);
-      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(lazy.brush.x, lazy.brush.y, ctx.lineWidth / 2, 0, Math.PI * 2);
+      ctx.fill();
     }
   };
 
@@ -160,73 +161,60 @@ onMounted(() => {
 
   let insideActivationZone = false;
   const togglePainting = (e) => {
-    const { offsetX, offsetY } = e;
-    const radius = 50; // Radio que cubre la zona de la mancha
+    e.preventDefault(); // Prevenir el comportamiento predeterminado en dispositivos táctiles
+    const isTouchEvent = e.touches && e.touches.length > 0;
+    const offsetX = isTouchEvent ? e.touches[0].clientX - canvas.getBoundingClientRect().left : e.offsetX;
+    const offsetY = isTouchEvent ? e.touches[0].clientY - canvas.getBoundingClientRect().top : e.offsetY;
+
+    const radius = 50;
     const distance = Math.sqrt((offsetX - 75) ** 2 + (offsetY - 50) ** 2);
 
     if (distance <= radius) {
-      if (!insideActivationZone) { // Cambiar el estado solo si el puntero acaba de entrar en la zona
-        insideActivationZone = true; // Marcar que el puntero está dentro de la zona
-        if (canDraw) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          drawInkBlob('orange');
-          canDraw = false;
-          linkColor.value = 'black';
-        } else {
-          canDraw = true;
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          drawInkBlob('black');
-          linkColor.value = 'orange'; // Actualizar la variable reactiva
-        }
+      if (!insideActivationZone) {
+        insideActivationZone = true;
+        canDraw = !canDraw;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawInkBlob(canDraw ? 'black' : 'pink');
+        linkColor.value = canDraw ? 'orange' : 'black';
       }
     } else {
-      insideActivationZone = false; // Marcar que el puntero ha salido de la zona
+      insideActivationZone = false;
     }
   };
 
-  //Escuchadores de eventos para el puntero
+  // Event listeners para escritorio
   canvas.addEventListener('mousedown', startDrawing);
-  canvas.addEventListener('touchstart', startDrawing, { passive: false });
   canvas.addEventListener('mousemove', draw);
-  canvas.addEventListener('touchmove', draw, { passive: false });
   canvas.addEventListener('mouseup', stopDrawing);
-  canvas.addEventListener('touchend', stopDrawing);
   canvas.addEventListener('mouseleave', stopDrawing);
   canvas.addEventListener('mousemove', togglePainting);
-  // // canvas.addEventListener('mousemove', (e) => {
-  // //   if (!canDraw || !isDrawing) return;
-  // //   lazy.update({ x: e.clientX, y: e.clientY });
-  // //   if (lazy.brushHasMoved()) {
-  // //     ctx.lineTo(lazy.brush.x, lazy.brush.y);
-  // //     ctx.stroke();
-  // //   }
-  // // });
 
-  // // canvas.addEventListener('mousedown', (e) => {
-  // //   if (e.button !== 0 || !canDraw) return;
-  // //   isDrawing = true;
-  // //   setEffects(); // Aplicar efectos al comenzar a dibujar
-  // //   ctx.beginPath();
-  // //   ctx.moveTo(e.offsetX, e.offsetY); // Iniciar el trazo en la posición actual del puntero
-  // // });
-
-  // // canvas.addEventListener('mouseup', () => {
-  // //   if (isDrawing) {
-  // //     isDrawing = false;
-  // //     ctx.beginPath(); // Preparar para un nuevo trazo
-  // //   }
-  // });
-
-  // canvas.addEventListener('mousemove', togglePainting);
+  // Event listeners para dispositivos táctiles
+  // canvas.addEventListener('touchstart', startDrawing, { passive: false });
+  canvas.addEventListener('touchstart', (e) => {
+    togglePainting(e);
+    startDrawing(e); // Puedes llamar a startDrawing aquí si quieres empezar a dibujar inmediatamente después de activar el pincel
+  }, { passive: false });
+  canvas.addEventListener('touchmove', draw, { passive: false });
+  canvas.addEventListener('touchend', stopDrawing);
+  canvas.addEventListener('touchcancel', stopDrawing);
 });
 
 // Funciones para el slider de imágenes
 const prevImage = () => {
   state.activeImage = (state.activeImage - 1 + images.length) % images.length; // Cambiar a la imagen anterior
+  const canvas = canvasRef.value;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawInkBlob(canDraw ? 'black' : 'pink');
 };
 
 const nextImage = () => {
   state.activeImage = (state.activeImage + 1) % images.length; // Cambiar a la siguiente imagen
+  const canvas = canvasRef.value;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawInkBlob(canDraw ? 'black' : 'pink');
 };
 
 </script>
@@ -237,7 +225,6 @@ const nextImage = () => {
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  margin: -8px;
 }
 
 .slider-images img {
@@ -321,5 +308,12 @@ canvas {
   text-decoration: none;
   font-size: x-large;
   margin: 0 1em;
+}
+
+@media screen and (max-width: 768px) {
+  .social-links a {
+    font-size: small;
+    bottom: 1em;
+  }
 }
 </style>
