@@ -46,25 +46,68 @@ body {
 }
 
 .exhib-container {
-  background-color: black;
-  color: aliceblue;
+  position: relative;
   padding: 4rem;
+  background-position: center;
+  background-size: cover;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.exhib-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0);
+  /* Inicialmente transparente */
+  transition: background-color 0.5s ease;
+  z-index: -1;
+
+}
+
+.exhib-container:hover::after {
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Oscurece al hacer hover */
+}
+
+.exhib-text-container {
+  z-index: 2;
+  /* Asegura que el texto esté por encima del efecto de oscurecimiento */
+  position: relative;
+  /* Asegura que el z-index funcione correctamente */
 }
 
 .exhib-title {
   margin-bottom: 2em;
+  font-size: larger;
 }
 
+.exhib-title,
 .exhib-data {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  opacity: 0;
+  /* Inicialmente oculto */
+  transition: opacity 0.5s ease;
+
+}
+
+.exhib-container:hover .exhib-title,
+.exhib-container:hover .exhib-data {
+  opacity: 1;
+  /* Visible al hacer hover */
+  color: #ffffff;
 }
 
 .exhib-authors,
 .exhib-dates,
 .exhib-address {
+  margin-top: 1em;
   position: relative;
   display: inline-block;
 }
@@ -78,8 +121,17 @@ body {
   top: 0;
   width: 100%;
   border-top: 1px solid rgb(199, 187, 187);
-  /* Ajusta el color y estilo de la línea según necesites */
   transform: translateY(-50%);
+  opacity: 0;
+  /* Inicialmente oculto */
+  transition: opacity 0.5s ease;
+}
+
+.exhib-container:hover .exhib-authors::before,
+.exhib-container:hover .exhib-dates::before,
+.exhib-container:hover .exhib-address::before {
+  opacity: 1;
+  /* Visible al hacer hover */
 }
 
 
@@ -104,5 +156,20 @@ body {
   .exhib-data {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 1014px) {
+  .exhib-container::after {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .exhib-title, 
+  .exhib-data,
+  .exhib-authors::before,
+  .exhib-dates::before,
+  .exhib-address::before {
+    opacity: 1; 
+    color: #ffffff;
   }
 }

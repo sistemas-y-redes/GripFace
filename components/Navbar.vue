@@ -48,7 +48,7 @@ export default {
 .artist-name {
   font-size: 32px;
   font-weight: bold;
-  margin-left: 2em;
+  margin-left: 3vw;
 }
 
 .social-links {
@@ -64,7 +64,7 @@ export default {
 }
 
 .social-icon {
-  margin-right: 3em;
+  margin-right: 3vw;
   margin-top: 0.8em;
   width: 2em;
   height: 2em;
