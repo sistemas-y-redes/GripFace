@@ -56,21 +56,24 @@
     </div>
     <div class="bio-images">
       <!-- Imágenes placeholder, reemplaza las URLs según sea necesario -->
-      <img src="/img/gripfaceesculturaweb.webp" alt="Placeholder Image">
+      <img src="/img/portrait.webp" alt="Placeholder Image">
     </div>
 
     <section>
-      <div v-for="(exhib, index) in exhibs" :key="index" class="exhib-container">
-        <div class="exhib-title">{{ exhib.title }}</div>
-        <div class="exhib-data">
-          <div class="exhib-authors">
-            <p>{{ exhib.authors }}</p>
-          </div>
-          <div class="exhib-dates">
-            <p> {{ exhib.dates }}</p>
-          </div>
-          <div class="exhib-address">
-            <p> {{ exhib.address }}</p>
+      <div v-for="(exhib, index) in exhibs" :key="index" class="exhib-container"
+        :style="{ backgroundImage: 'url(' + exhib.imageUrl + ')' }">
+        <div class="exhib-text-container">
+          <div class="exhib-title">{{ exhib.title }}</div>
+          <div class="exhib-data">
+            <div class="exhib-authors">
+              <p>{{ exhib.authors }}</p>
+            </div>
+            <div class="exhib-dates">
+              <p> {{ exhib.dates }}</p>
+            </div>
+            <div class="exhib-address">
+              <p> {{ exhib.address }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -99,18 +102,23 @@ export default {
           authors: 'MijuLee, Gripface',
           dates: '23/09/2023-15-11-2023',
           address: 'Carrer de la Misericòrdia 2, Palma de Mallorca',
+          imageUrl: '/img/ex01.webp',
         },
         {
           title: 'FIND AN OFFLINE SHELTER',
           authors: 'Gripface, Mijulee',
           dates: '15/05/2023-20/05/23',
           address: 'Rue Froissart, 7 Le Marais, Paris',
+          imageUrl: '/img/ex02.webp',
+
         },
         {
           title: 'COLLECTIVE EXHIBITION',
           authors: 'Ela Fidalgo, Gripface, Marria Pratts, Miju Lee, Michael Staniak',
           dates: '21/04/2023-01-06-2023',
           address: 'Carrer del Molí del Compte 47A, Palma de Mallorca',
+          imageUrl: '/img/ex03.webp',
+
         }
       ]
     }
