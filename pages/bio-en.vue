@@ -72,77 +72,60 @@
             <img src="/img/gripfaceesculturaweb.webp" alt="Placeholder Image">
         </div>
 
+        <section>
+            <div v-for="(exhib, index) in exhibs" :key="index" class="exhib-container">
+                <div class="exhib-title">{{ exhib.title }}</div>
+                <div class="exhib-data">
+                    <div class="exhib-authors">
+                        <p>{{ exhib.authors }}</p>
+                    </div>
+                    <div class="exhib-dates">
+                        <p> {{ exhib.dates }}</p>
+                    </div>
+                    <div class="exhib-address">
+                        <p> {{ exhib.address }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <footer class="footer">
             <p>&copy; 2024 Gripface. Todos los derechos reservados.</p>
         </footer>
     </div>
 </template>
 <script>
+import Navbar from '@/components/Navbar.vue';
+import '@/assets/css/bios.css';
+
 export default {
-    name: 'Navbar',
+    components: {
+        Navbar,
+    },
+    data() {
+        return {
+
+            exhibs: [
+                {
+                    title: 'MEMORANDUM OF THE EVERYDAY',
+                    authors: 'MijuLee, Gripface',
+                    dates: '09/23/2023-11/15/2023',
+                    address: 'Carrer de la Misericòrdia 2, Palma de Mallorca',
+                },
+                {
+                    title: 'FIND AN OFFLINE SHELTER',
+                    authors: 'Gripface, Mijulee',
+                    dates: '05/15/2023-05/20/23',
+                    address: 'Rue Froissart, 7 Le Marais, Paris',
+                },
+                {
+                    title: 'COLLECTIVE EXHIBITION',
+                    authors: 'Ela Fidalgo, Gripface, Marria Pratts, Miju Lee, Michael Staniak',
+                    dates: '04/21/2023-06-01-2023',
+                    address: 'Carrer del Molí del Compte 47A, Palma de Mallorca',
+                }
+            ]
+        }
+    }
 }
 </script>
-<style scoped>
-html,
-body {
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-
-.bio-container {
-    margin: -8px;
-}
-
-.content {
-    display: flex;
-    justify-content: space-around;
-    margin: 0px;
-}
-
-.bio-text-container {
-    background-color: black;
-    color: white;
-    padding: 2rem;
-    margin: 0px;
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    /* Divide el contenedor en 12 columnas */
-    grid-gap: 10px;
-    /* Espacio entre los elementos */
-    align-items: left;
-    /* Centra verticalmente los elementos */
-}
-
-.bio-title {
-    grid-column: span 3;
-}
-
-.spacer {
-    grid-column: span 4;
-}
-
-.bio-content {
-    grid-column: span 5;
-}
-
-.bio-images {
-    padding: 3em;
-    background-color: black;
-}
-
-.bio-images img {
-    width: 100%;
-    margin-bottom: 10px;
-}
-
-.footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    background-color: #f0f0f0;
-    color: black;
-    height: 10em;
-}
-</style>

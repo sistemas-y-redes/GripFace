@@ -64,15 +64,12 @@
         <div class="exhib-title">{{ exhib.title }}</div>
         <div class="exhib-data">
           <div class="exhib-authors">
-            <p>_________________________________________________________________________</p>
             <p>{{ exhib.authors }}</p>
           </div>
           <div class="exhib-dates">
-            <p>___________________________________________</p>
             <p> {{ exhib.dates }}</p>
           </div>
           <div class="exhib-address">
-            <p>_______________________________________________________________</p>
             <p> {{ exhib.address }}</p>
           </div>
         </div>
@@ -87,6 +84,8 @@
 
 <script>
 import Navbar from '@/components/Navbar.vue';
+import '@/assets/css/bios.css';
+
 export default {
   components: {
     Navbar,
@@ -118,87 +117,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-html,
-body {
-  margin: 0;
-}
-
-.bio-container {}
-
-.content {
-  display: flex;
-  justify-content: space-around;
-  margin: 0px;
-}
-
-.bio-text-container {
-  background-color: black;
-  color: white;
-  padding: 2rem;
-  margin: 0px;
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  /* Divide el contenedor en 12 columnas */
-  grid-gap: 10px;
-  /* Espacio entre los elementos */
-  align-items: left;
-  /* Centra verticalmente los elementos */
-}
-
-.bio-title {
-  grid-column: span 3;
-}
-
-.spacer {
-  grid-column: span 4;
-}
-
-.bio-content {
-  grid-column: span 5;
-}
-
-.bio-images {
-  padding: 3em;
-  background-color: black;
-}
-
-.bio-images img {
-  width: 100%;
-  margin-bottom: 10px;
-}
-
-.exhib-container {
-  background-color: black;
-  color:aliceblue;
-  padding: 4rem;
-}
-
-.exhib-title {
-  margin-bottom: 2em;
-}
-
-.exhib-data {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  background-color: #f0f0f0;
-  color: black;
-  height: 10em;
-}
-
-@media (max-width:600px) {
-  .exhib-data {
-    flex-direction: column;
-  }
-}
-</style>
